@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { db, isFirebaseConfigured } from "../lib/firebase";
+import { collection, onSnapshot } from "../lib/store";
+import { db } from "../lib/firebase";
 import { SEED_PRODUCTS } from "../data/products";
 
 const ProductContext = createContext(null);
@@ -13,7 +13,6 @@ export function ProductProvider({ initialProducts, children }) {
 
   // Live Firestore products replace the seed catalogue once any exist.
   useEffect(() => {
-    if (!isFirebaseConfigured) return;
     return onSnapshot(
       collection(db, "products"),
       (snap) => {

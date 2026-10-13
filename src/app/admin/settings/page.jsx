@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "../../../lib/store";
 import { CheckCircle2, ImagePlus, Loader2, ShieldAlert, XCircle } from "lucide-react";
 import { db } from "../../../lib/firebase";
 import { can } from "../../../lib/admin";

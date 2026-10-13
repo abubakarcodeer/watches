@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, resetDemoData, updateDoc } from "../../lib/store";
 import {
   ExternalLink,
   LayoutDashboard,
@@ -12,7 +12,7 @@ import {
   Menu,
   Package,
   Settings,
-  PlugZap,
+  FlaskConical,
   ShieldAlert,
   ShoppingBag,
   Users,
@@ -34,29 +34,6 @@ const NAV = [
   { href: "/admin/customers", label: "Customers & Team", icon: Users, permission: "viewDashboard" },
   { href: "/admin/settings", label: "Settings", icon: Settings, permission: "manageSettings" },
 ];
-
-// Shown instead of the login redirect while .env.local has no Firebase keys.
-function SetupRequired() {
-  return (
-    <div className="grid min-h-screen place-items-center bg-sand px-5">
-      <div className="w-full max-w-lg rounded-xl border border-line bg-white p-8">
-        <span className="grid h-14 w-14 place-items-center rounded-full bg-cream text-forest">
-          <PlugZap size={26} />
-        </span>
-        <h1 className="mt-5 text-2xl">Connect Firebase to open the dashboard</h1>
-        <p className="mt-2 text-sm text-muted">The storefront is running on the sample catalogue. Orders, products, customers and settings need a Firebase project.</p>
-        <ol className="mt-5 list-decimal space-y-2 pl-5 text-sm text-ink/80">
-          <li>Create a Firebase project and enable <b>Authentication</b> (Email/Password, Google) and <b>Firestore</b>.</li>
-          <li>Copy <code className="rounded bg-sand px-1">.env.example</code> to <code className="rounded bg-sand px-1">.env.local</code> and paste the web app config.</li>
-          <li>Deploy <code className="rounded bg-sand px-1">firestore.rules</code>, then restart the dev server.</li>
-        </ol>
-        <Link href="/" className="btn-outline mt-6">
-          Back to store
-        </Link>
-      </div>
-    </div>
-  );
-}
 
 function NoAccess({ user, onLogout }) {
   const { addToast } = useToast();
@@ -105,14 +82,14 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { addToast } = useToast();
 
   useEffect(() => {
-    if (isFirebaseConfigured && !loading && !currentUser) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    if (!loading && !currentUser) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
   }, [loading, currentUser, router, pathname]);
 
   useEffect(() => setMenuOpen(false), [pathname]);
 
-  if (!isFirebaseConfigured) return <SetupRequired />;
   if (loading || !currentUser) return <Loading />;
 
   const role = userProfile?.role;
@@ -184,6 +161,24 @@ export default function AdminLayout({ children }) {
             <span className="grid h-9 w-9 place-items-center rounded-full bg-cream font-semibold uppercase text-forest">{name.charAt(0)}</span>
           </div>
         </header>
+        {!isFirebaseConfigured && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-gold-soft bg-cream px-4 py-2.5 text-xs text-ink/80 md:px-8">
+            <FlaskConical size={15} className="shrink-0 text-gold-deep" />
+            <p className="min-w-0 flex-1">
+              <b>Demo mode.</b> Sample data saved in this browser only. Add your Firebase keys to <code className="rounded bg-white px-1">.env.local</code> to go live.
+            </p>
+            <button
+              onClick={() => {
+                if (!window.confirm("Reset all demo products, orders and settings to the original samples?")) return;
+                resetDemoData();
+                addToast("Demo data reset");
+              }}
+              className="font-semibold text-forest link-underline"
+            >
+              Reset demo data
+            </button>
+          </div>
+        )}
         <main className="px-4 py-8 md:px-8">{children}</main>
       </div>
     </div>

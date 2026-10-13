@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "./store";
 import { db } from "./firebase";
 import { toDate } from "./admin";
 

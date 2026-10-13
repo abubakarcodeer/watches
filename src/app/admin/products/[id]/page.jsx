@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "../../../../lib/store";
 import { PackageX, ShieldAlert } from "lucide-react";
 import { db } from "../../../../lib/firebase";
 import { can } from "../../../../lib/admin";

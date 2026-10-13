@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { doc, getDoc } from "../../lib/store";
+import { db, isFirebaseConfigured } from "../../lib/firebase";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import AuthShell, { authErrorMessage, GoogleButton } from "../../components/auth/AuthShell";
@@ -27,7 +27,7 @@ export default function LoginPage() {
       await action();
       addToast("Welcome back!");
       const next = new URLSearchParams(window.location.search).get("next");
-      router.push(next?.startsWith("/") && !next.startsWith("//") ? next : "/account");
+      router.push(next?.startsWith("/") && !next.startsWith("//") ? next : isFirebaseConfigured ? "/account" : "/admin");
     } catch (err) {
       if (err.message === "EMAIL_NOT_VERIFIED") {
         setUnverifiedUser(err.user);
@@ -94,6 +94,13 @@ export default function LoginPage() {
 
   return (
     <AuthShell title="Sign In" subtitle="Access your orders, wishlist and faster checkout.">
+      {!isFirebaseConfigured && (
+        <p className="mb-5 rounded-lg border border-gold-soft bg-cream p-3 text-xs leading-relaxed text-ink/80">
+          <b>Demo mode.</b> Firebase is not connected yet, so the only account is the dashboard admin. Its email and password are the{" "}
+          <code className="rounded bg-white px-1">DEMO_ADMIN_EMAIL</code> and <code className="rounded bg-white px-1">DEMO_ADMIN_PASSWORD</code> values in{" "}
+          <code className="rounded bg-white px-1">.env.local</code>.
+        </p>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();

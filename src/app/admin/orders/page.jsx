@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { deleteDoc, doc, increment, serverTimestamp, updateDoc, writeBatch } from "firebase/firestore";
+import { deleteDoc, doc, increment, serverTimestamp, updateDoc, writeBatch } from "../../../lib/store";
 import { Download, ShoppingBag, Trash2 } from "lucide-react";
 import { db } from "../../../lib/firebase";
 import { useCollection } from "../../../lib/useCollection";

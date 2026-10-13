@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc } from "../../../lib/store";
 import { Download, Mail, Trash2 } from "lucide-react";
 import { db } from "../../../lib/firebase";
 import { useCollection } from "../../../lib/useCollection";

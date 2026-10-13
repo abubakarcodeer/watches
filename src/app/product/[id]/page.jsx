@@ -2,6 +2,7 @@ import { getActiveProducts, getProductById } from "../../../lib/server/products"
 import ProductPageClient from "../../../components/product/ProductPageClient";
 import { notFound } from "next/navigation";
 import { SITE_URL } from "../../../lib/config";
+import { isFirebaseConfigured } from "../../../lib/firebase";
 import { SEED_PRODUCTS } from "../../../data/products";
 
 export async function generateMetadata(props) {
@@ -47,7 +48,7 @@ export default async function Page(props) {
   const params = await props.params;
   const product = await getProductById(params.id);
 
-  if (!product) {
+  if (!product && isFirebaseConfigured) {
     notFound();
   }
 

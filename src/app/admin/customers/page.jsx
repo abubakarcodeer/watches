@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "../../../lib/store";
 import { Users } from "lucide-react";
 import { db } from "../../../lib/firebase";
 import { useCollection } from "../../../lib/useCollection";

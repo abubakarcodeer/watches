@@ -35,6 +35,8 @@ export const authErrorMessage = (err) => {
   const code = err?.code || "";
   const msg = err?.message || "";
   if (msg === "EMAIL_NOT_VERIFIED") return "Please verify your email address before signing in.";
+  if (code === "demo/unavailable") return "This needs Firebase. In demo mode only the admin login from .env.local works.";
+  if (code.includes("too-many-requests")) return "Too many attempts. Please try again in a few minutes.";
   if (code.includes("invalid-credential") || code.includes("wrong-password"))
     return "Incorrect email or password.";
   if (code.includes("user-not-found"))

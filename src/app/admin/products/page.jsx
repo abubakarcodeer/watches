@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, serverTimestamp, updateDoc } from "../../../lib/store";
 import { AlertCircle, Package, Pencil, Plus, Trash2 } from "lucide-react";
 import { db } from "../../../lib/firebase";
 import { useCollection } from "../../../lib/useCollection";

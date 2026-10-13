@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "../../lib/store";
 import { LayoutDashboard, Package } from "lucide-react";
 import { db } from "../../lib/firebase";
-import { STAFF_ROLES } from "../../lib/admin";
+import { STAFF_ROLES, toDate } from "../../lib/admin";
 import { formatPrice } from "../../lib/config";
 import { useAuth } from "../../context/AuthContext";
 
@@ -27,7 +27,7 @@ export default function AccountPage() {
         setOrders(
           snap.docs
             .map((d) => ({ id: d.id, ...d.data() }))
-            .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+            .sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0))
         )
       )
       .catch((err) => {
@@ -97,7 +97,7 @@ export default function AccountPage() {
               <div>
                 <p className="font-semibold">#{o.id.slice(0, 8).toUpperCase()}</p>
                 <p className="text-muted">
-                  {o.createdAt?.toDate?.().toLocaleDateString() || ""} · {o.items?.reduce((n, i) => n + i.quantity, 0)} items
+                  {toDate(o.createdAt)?.toLocaleDateString() || ""} · {o.items?.reduce((n, i) => n + i.quantity, 0)} items
                 </p>
               </div>
               <span className="rounded-full bg-sand px-3 py-1 text-xs font-semibold">{o.status}</span>

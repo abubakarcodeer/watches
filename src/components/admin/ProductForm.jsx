@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "../../lib/store";
 import { ArrowLeft, ImagePlus, Loader2, Plus, X } from "lucide-react";
 import { db } from "../../lib/firebase";
 import { uploadImage } from "../../lib/uploadImage";

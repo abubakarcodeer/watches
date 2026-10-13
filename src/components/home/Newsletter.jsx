@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db, isFirebaseConfigured } from "../../lib/firebase";
+import { addDoc, collection, serverTimestamp } from "../../lib/store";
+import { db } from "../../lib/firebase";
 import { useToast } from "../../context/ToastContext";
 import { IMAGES } from "../../data/images";
 
@@ -14,7 +14,6 @@ export default function Newsletter() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!/^\S+@\S+\.\S+$/.test(email)) return addToast("Please enter a valid email", "error");
-    if (!isFirebaseConfigured) return addToast("Connect Firebase to collect subscribers.", "error");
     setStatus("loading");
     try {
       await addDoc(collection(db, "subscribers"), { email: email.trim().toLowerCase(), createdAt: serverTimestamp() });

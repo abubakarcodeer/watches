@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, setDoc } from "../../lib/store";
 import { Check } from "lucide-react";
 import { db } from "../../lib/firebase";
 import { formatPrice } from "../../lib/config";
@@ -141,7 +141,7 @@ export default function CheckoutPage() {
       // Remove abandoned checkout record if it exists
       if (checkoutRef) {
         try {
-          const { deleteDoc } = await import("firebase/firestore");
+          const { deleteDoc } = await import("../../lib/store");
           await deleteDoc(checkoutRef);
         } catch (e) {
           console.warn("Failed to clean up checkout draft:", e);

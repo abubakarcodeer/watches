@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { doc, serverTimestamp, writeBatch } from "../../lib/store";
 import { AlertTriangle, ArrowRight, DollarSign, Mail, Package, ShoppingBag, TrendingUp } from "lucide-react";
 import { db } from "../../lib/firebase";
 import { useCollection } from "../../lib/useCollection";

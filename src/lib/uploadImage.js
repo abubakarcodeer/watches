@@ -1,9 +1,10 @@
 "use client";
 
-import { auth } from "./firebase";
+import { auth, isFirebaseConfigured } from "./firebase";
 
 // Uploads through /api/upload (ImgBB); the route checks the caller is an admin or manager.
 export async function uploadImage(file) {
+  if (!isFirebaseConfigured) throw new Error("Uploads need Firebase. In demo mode, paste an image URL instead.");
   const token = await auth.currentUser?.getIdToken();
   if (!token) throw new Error("Please sign in again");
 

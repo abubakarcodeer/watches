@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db, isFirebaseConfigured } from "../lib/firebase";
+import { doc, onSnapshot } from "../lib/store";
+import { db } from "../lib/firebase";
 import { DEFAULT_SETTINGS } from "../lib/config";
 
 const SettingsContext = createContext(DEFAULT_SETTINGS);
@@ -14,7 +14,6 @@ export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
   useEffect(() => {
-    if (!isFirebaseConfigured) return;
     return onSnapshot(
       doc(db, "settings", "store"),
       (snap) => {
