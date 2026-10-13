@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Emails allowed to promote themselves to admin from the dashboard's "Claim admin access" button.
+    // Add the owner's sign-in email here, deploy, claim once, then you can empty it again.
+    function bootstrapAdmins() {
+      return [];
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasRole(roles) {
+      return isSignedIn() && exists(userDoc()) && get(userDoc()).data.role in roles;
+    }
+
+    function isAdmin()   { return hasRole(['admin']); }
+    function isManager() { return hasRole(['admin', 'manager']); }
+    function isStaff()   { return hasRole(['admin', 'manager', 'confirmer']); }
+
+    function onlyChanges(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // Customers manage their own profile, cart and wishlist but can never grant themselves a role.
+    match /users/{userId} {
+      allow read: if (isSignedIn() && request.auth.uid == userId) || isStaff();
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+        request.resource.data.role == 'customer';
+      allow update: if
+        (isAdmin() && request.auth.uid != userId) ||
+        (isSignedIn() && request.auth.uid == userId && request.resource.data.role == resource.data.role) ||
+        (isSignedIn() && request.auth.uid == userId &&
+          request.auth.token.email_verified == true &&
+          request.auth.token.email in bootstrapAdmins() &&
+          request.resource.data.role == 'admin' && onlyChanges(['role']));
+      allow delete: if isAdmin();
+    }
+
+    // Secure way to check if an email exists without exposing user profiles.
+    match /email_indices/{email} {
+      allow get: if true; // Guests can check a specific email
+      allow list: if false; // NO ONE can see the whole list of emails
+      allow create: if isSignedIn();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isManager();
+    }
+
+    // Pakistan-only orders from guests or customers; staff work them, only admins delete.
+    match /orders/{orderId} {
+      allow read: if isStaff() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if
+        request.resource.data.customer is string && request.resource.data.customer.size() >= 2 &&
+        request.resource.data.phone is string && request.resource.data.phone.matches('^[+]923[0-9]{9}$') &&
+        request.resource.data.shipping is map &&
+        request.resource.data.shipping.country == 'Pakistan' &&
+        request.resource.data.shipping.province is string && request.resource.data.shipping.province.size() > 0 &&
+        request.resource.data.shipping.city is string && request.resource.data.shipping.city.size() > 0 &&
+        request.resource.data.items is list && request.resource.data.items.size() > 0 &&
+        request.resource.data.total is number && request.resource.data.total > 0 &&
+        request.resource.data.status == 'Pending' &&
+        (request.resource.data.userId == null ||
+          (isSignedIn() && request.resource.data.userId == request.auth.uid));
+      allow update: if isStaff() && onlyChanges(['status', 'adminNote', 'updatedAt']);
+      allow delete: if isAdmin();
+    }
+
+    match /checkouts/{checkoutId} {
+      allow read: if isStaff();
+      allow create, update: if true; // Guests can save progress
+      allow delete: if isManager();
+    }
+
+    match /subscribers/{subscriberId} {
+      allow create: if request.resource.data.email is string &&
+        request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$');
+      allow read: if isStaff();
+      allow delete: if isManager();
+    }
+
+    // Storefront settings (hero, announcement, delivery, WhatsApp) are public to read.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isManager();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

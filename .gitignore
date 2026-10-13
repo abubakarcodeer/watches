@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+dist
+*.log
+.env
+.env.*
+!.env.example
+.idea
+.vercel
+.artifacts
+.DS_Store
+.claude
+*.zip
+

@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body { overflow-x: clip; }
+  body { @apply bg-white font-sans text-ink antialiased; }
+  h1, h2, h3 { @apply font-semibold tracking-[-0.02em]; }
+  ::selection { @apply bg-forest text-white; }
+}
+
+@layer components {
+  .btn-dark {
+    @apply inline-flex items-center justify-center rounded-lg bg-forest px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-5 py-3 text-sm font-semibold text-ink transition hover:bg-gold-deep disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-lg border border-forest px-6 py-3.5 text-sm font-semibold text-forest transition hover:bg-forest hover:text-white;
+  }
+  .field {
+    @apply w-full rounded-lg border border-line bg-white px-4 py-3 text-sm outline-none transition placeholder:text-muted/70 focus:border-forest;
+  }
+  .link-underline {
+    @apply underline decoration-1 underline-offset-4 transition hover:text-muted;
+  }
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.14em];
+  }
+  .section-title {
+    @apply text-[22px] font-bold leading-tight md:text-[27px];
+  }
+  .more-link {
+    @apply inline-flex shrink-0 items-center gap-2 text-sm font-medium text-ink transition hover:text-gold-deep;
+  }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Shipping Label Print Overrides */
+  body * {
+    visibility: hidden;
+  }
+  .shipping-labels-container, .shipping-labels-container * {
+    visibility: visible;
+  }
+  .shipping-labels-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .label-page {
+    page-break-after: always;
+    border: 2px solid black !important;
+    margin-bottom: 0 !important;
+  }
+  @page {
+    size: auto;
+    margin: 0mm;
+  }
+}
