@@ -131,6 +131,3 @@ firestore.rules        Firestore security rules
 - **Brand logos** are hot-linked from Wikimedia Commons; copy them into `public/brands` and update `src/data/brandLogos.js`. The logos remain trademarks of their owners.
 - **Customer reviews** on the homepage (`src/components/home/Testimonials.jsx`) and the **Help Centre policies** (`src/app/help/page.jsx`) are sample copy; replace them with real content.
 
-## About
-
-WatchShop.com: a Next.js and Firebase watch store with a full admin dashboard. Shop authentic men's, women's, luxury and smart watches from Rolex, Omega, Seiko, Tissot, Casio and more. Includes a built-in demo mode that runs without any backend.
